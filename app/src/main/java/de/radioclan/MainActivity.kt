@@ -24,23 +24,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // UI Elemente finden
         webChat = findViewById(R.id.webChat)
         webMobil = findViewById(R.id.webMobil)
         playerContainer = findViewById(R.id.playerContainer)
         streamListLayout = findViewById(R.id.streamList)
 
-        // Webseiten im Hintergrund laden (Paralleler Betrieb)
+        // Webseiten laden
         setupWebView(webChat, "https://Radio-Clan.de/RDC")
         setupWebView(webMobil, "https://radio-clan.de/mobil2.php")
 
-        // Streams live von der Webseite laden
+        // WICHTIG: Streams laden
         loadStreamsOnline()
     }
 
     private fun setupWebView(wv: WebView, url: String) {
         wv.settings.javaScriptEnabled = true
-        wv.settings.domStorageEnabled = true // Wichtig für Login-Erhalt
+        wv.settings.domStorageEnabled = true
         wv.webViewClient = WebViewClient()
         wv.loadUrl(url)
     }
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     private fun loadStreamsOnline() {
         thread {
             try {
-                // JSON von deiner URL laden
                 val jsonText = URL("https://radio-clan.de/stream.json").readText()
                 val jsonObject = JSONObject(jsonText)
                 val jsonArray = jsonObject.getJSONArray("streams")
@@ -57,23 +55,24 @@ class MainActivity : AppCompatActivity() {
                     streamListLayout.removeAllViews()
                     for (i in 0 until jsonArray.length()) {
                         val stream = jsonArray.getJSONObject(i)
-                        val rawName = stream.getString("name")
-                        val url = stream.getString("url")
-
-                        // Schönheit: "laut.fm/" aus dem Namen entfernen
-                        val cleanName = rawName.replace("laut.fm/", "").replace("-", " ").capitalize()
+                        val name = stream.getString("name")
+                        // Wir nehmen die URL direkt aus der JSON
+                        val streamUrl = stream.getString("url") 
 
                         val btn = Button(this).apply {
-                            text = cleanName
-                            setBackgroundColor(Color.parseColor("#B30000")) // Clan Rot
+                            text = name.replace("laut.fm/", "").uppercase()
+                            setBackgroundColor(Color.parseColor("#B30000"))
                             setTextColor(Color.WHITE)
-                            setOnClickListener { startRadio(url) }
                             
+                            setOnClickListener { 
+                                startRadio(streamUrl) 
+                            }
+
                             val params = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                             )
-                            params.setMargins(0, 15, 0, 15)
+                            params.setMargins(0, 10, 0, 10)
                             layoutParams = params
                         }
                         streamListLayout.addView(btn)
@@ -90,8 +89,6 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("STREAM_URL", url)
         startForegroundService(intent)
     }
-
-    // --- Funktionen für die Buttons unten (Navigation) ---
 
     fun showPlayer(v: View) {
         playerContainer.visibility = View.VISIBLE

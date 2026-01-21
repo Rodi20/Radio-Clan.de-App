@@ -4,6 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        // Diese Versionen müssen zu deinem Projekt passen
         classpath "com.android.tools.build:gradle:8.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
     }
@@ -14,4 +15,8 @@ allprojects {
         google()
         mavenCentral()
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

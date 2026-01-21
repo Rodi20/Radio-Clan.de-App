@@ -10,22 +10,25 @@
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="Radio Clan"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:roundIcon="@mipmap/icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:configChanges="orientation|screenSize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service 
+        <service
             android:name=".AudioService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
     </application>
 </manifest>
